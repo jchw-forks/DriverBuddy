@@ -121,11 +121,11 @@ def get_ioctl_code(ioctl_code):
     else:
         device_name = device_names[device]
 
-    print '[+] IOCTL: 0x%08X' % (ioctl_code)
-    print '[+] Device   : %s (0x%X)' % (device_name, device)
-    print '[+] Function : 0x%X' % (function)
-    print '[+] Method   : %s (%d)' % (method_names[method], method)
-    print '[+] Access   : %s (%d)' % (access_names[access], access)
+    print('[+] IOCTL: 0x%08X' % (ioctl_code))
+    print('[+] Device   : %s (0x%X)' % (device_name, device))
+    print('[+] Function : 0x%X' % (function))
+    print('[+] Method   : %s (%d)' % (method_names[method], method))
+    print('[+] Access   : %s (%d)' % (access_names[access], access))
     return
 
 '''#####################################################################
@@ -136,23 +136,23 @@ find_ioctls: Attempts to locate any IOCTLs in driver automatically.
 #####################################################################'''
 def find_ioctls():
     error = False
-    cur = MinEA()
-    max = MaxEA()
-    print "[+] Searching for IOCTLS found by IDA..."
+    cur = inf_get_min_ea()
+    max = inf_get_max_ea()
+    print("[+] Searching for IOCTLS found by IDA...")
     while cur < max:
-        cur = FindText(cur, SEARCH_DOWN, 0, 0, "IoControlCode")
+        cur = find_text(cur, SEARCH_DOWN, 0, 0, "IoControlCode")
         if cur == BADADDR:
             break
         else:
-            if GetOpType(cur, 0) == 5:
-                OpDecimal(cur, 0)
-                get_ioctl_code(int(GetOpnd(cur,0)))
+            if get_operand_type(cur, 0) == 5:
+                op_dec(cur, 0)
+                get_ioctl_code(int(print_operand(cur,0)))
                 error = True
-            elif GetOpType(cur, 1) == 5:
-                OpDecimal(cur, 1)
-                get_ioctl_code(int(GetOpnd(cur,1)))
+            elif get_operand_type(cur, 1) == 5:
+                op_dec(cur, 1)
+                get_ioctl_code(int(print_operand(cur,1)))
                 error = True
             else:
-                print "[-] Couldn't get IOCTL from %s at address %s " % (GetDisasm(cur), hex(cur))
+                print("[-] Couldn't get IOCTL from %s at address %s " % (generate_disasm_line(cur, 0), hex(cur)))
         cur = NextHead(cur)
     return error
