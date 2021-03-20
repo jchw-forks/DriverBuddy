@@ -8,9 +8,15 @@ from idc import *
 import ida_search
 
 # Architecture dependent globals
-FF_PTR = FF_QWORD # FF_DWORD
-get_ptr = get_64bit # get_32bit
-ptr_size = 8 # 4
+archinfo = get_inf_structure()
+if archinfo.is_64bit():
+    FF_PTR = FF_QWORD
+    get_ptr = get_64bit
+    ptr_size = 8
+else:
+    FF_PTR = FF_DWORD
+    get_ptr = get_32bit
+    ptr_size = 4
 
 def log(string):
     print('[+]: ' + string)
@@ -487,7 +493,7 @@ def populate_wdf():
                 id = add_struct(version)
                 if id != BADADDR:
                     log('Success')
-                    wdf_func = get_ptr(addr+ptr_size+0x10)
+                    wdf_func = get_ptr(addr+ptr_size+0x14)
                     size = get_struc_size(id)
                     log('create_struct (size=' + hex(size) + ') at ' +  hex(wdf_func))
                     del_items(wdf_func, 0, size)

@@ -154,5 +154,5 @@ def find_ioctls():
                 error = True
             else:
                 print("[-] Couldn't get IOCTL from %s at address %s " % (generate_disasm_line(cur, 0), hex(cur)))
-        cur = NextHead(cur)
+        cur = next_head(cur)
     return error
